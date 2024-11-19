@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head><title>Minesweeper</title></head>
+<style>
+body { 
+	display: flex; 
+	justify-content: center; 
+	align-items: center; 
+	height: 100vh; 
+	margin: 0; 
+	flex-direction: column;
+} 
+.container { 
+	position: relative;
+	display: flex; 
+	align-items: center; 
+} 
+#game { 
+	border: solid; 
+	/*margin-right: 20px; */
+} 
+.info { 
+	position: absolute;
+	left: 1006px;
+	margin-left: 20px;
+	display: flex; 
+	flex-direction: column; 
+	justify-content: center;
+}
+div#timer {
+	display: flex;
+}
+div#flags {
+	display: flex;
+	align-items: center;
+}
+.info-text {
+	font-size: 42px;
+	font-family: math;
+}
+</style>
+<body>
+	<div class="container">
+		<canvas oncontextmenu="return false;" id="game" width="1000" height="1000"></canvas>
+		<div class="info"> 
+			<div id="timer"><span class="info-text" id="timer-s">0</span><a class="info-text">.</a><span class="info-text" id="timer-ms">000</span></div> 
+			<div id="flags"><img src="./10.png" width="60px" height="60px"></img><a class="info-text">: </a><span class="info-text" id="flagCount">0</span></div>
+		</div>
+	</div>
+	<center><a>Window Size: </a><input type="range" min=""></center>
+	<center><a>test: </a><input type="range"></center>
+
+<script src="./minesweeper.js"></script>
+</body>
+</html>
