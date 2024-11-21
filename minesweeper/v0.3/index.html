@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="samisbrown">
+<link rel="stylesheet" href="./minesweeper.css">
+<title>Minesweeper</title></head>
+<body>
+	<div class="container">
+		<canvas oncontextmenu="return false;" id="game" width="800" height="800"></canvas>
+		<div id="info"> 
+			<div id="timer"><span class="info-text" id="timer-s">0</span><a class="info-text">.</a><span class="info-text" id="timer-ms">000</span></div> 
+			<div id="flags"><img src="./10.png" width="60px" height="60px"></img><a class="info-text">: </a><span class="info-text" id="flagCount">0</span></div>
+		</div>
+	</div>
+	<center>
+	<div id="slider-container">
+	<div><button id="reset-button" onclick="reset(); init();">New Game</button></div>
+	<div><a>Window Size: </a><input id="window-slider" type="range" min="500" max="1000" value="800" step="100"><a id="window-text">800</a></div>
+	<div><a>Game Board Size: </a><input id="board-slider" type="range" min="7" max="100" value="20"><a id="board-text">20</a></div>
+	<div><a>Mine Ratio: </a><input id="mine-ratio-slider" type="range" min="0.01" max="0.5" value="0.125" step="0.001"><a id="mine-ratio-text">0.125</a></div>
+	<div><a>Number of Mines: </a><input id="num-mines-slider" type="range" value="50" min="1" max="200"><a id="num-mines-text">50</a></div>
+	</div>
+	</center>
+
+<script src="./minesweeper.js"></script>
+</body>
+</html>
