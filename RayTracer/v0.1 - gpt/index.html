@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ray Tracer UI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .controls {
+      margin: 20px 0;
+    }
+    .control-group {
+      margin-bottom: 15px;
+    }
+    #canvas-container {
+      border: 1px solid black;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ray Tracer</h1>
+  <div class="controls">
+    <div class="control-group">
+      <label for="canvas-size">Canvas Size:</label>
+      <input type="range" id="canvas-size" min="200" max="1000" value="500">
+      <span id="canvas-size-value">500</span> px
+    </div>
+    <div class="control-group">
+      <label for="resolution">Resolution:</label>
+      <input type="range" id="resolution" min="10" max="500" value="100">
+      <span id="resolution-value">100</span> pixels
+    </div>
+    <div class="control-group">
+      <button id="add-object">Add Object</button>
+    </div>
+    <div class="control-group">
+      <label for="object-dropdown">Select Object:</label>
+      <select id="object-dropdown">
+        <option value="">None</option>
+      </select>
+    </div>
+    <div id="object-controls">
+      <h3>Edit Object</h3>
+      <label for="object-size">Size:</label>
+      <input type="number" id="object-size" step="1" value="10"><br>
+      <label for="object-x">Position X:</label>
+      <input type="number" id="object-x" step="1" value="0"><br>
+      <label for="object-y">Position Y:</label>
+      <input type="number" id="object-y" step="1" value="0"><br>
+      <label for="object-color">Color:</label>
+      <input type="color" id="object-color" value="#ff0000"><br>
+      <label for="object-radius">Radius:</label>
+      <input type="number" id="object-radius" step="1" value="10"><br>
+      <button id="update-object">Update Object</button>
+    </div>
+  </div>
+
+  <div id="canvas-container">
+    <canvas id="ray-tracer-canvas" width="500" height="500"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('ray-tracer-canvas');
+    const ctx = canvas.getContext('2d');
+    const canvasSizeSlider = document.getElementById('canvas-size');
+    const resolutionSlider = document.getElementById('resolution');
+    const addObjectButton = document.getElementById('add-object');
+    const objectDropdown = document.getElementById('object-dropdown');
+    const objectControls = document.getElementById('object-controls');
+    const sizeInput = document.getElementById('object-size');
+    const xInput = document.getElementById('object-x');
+    const yInput = document.getElementById('object-y');
+    const colorInput = document.getElementById('object-color');
+    const radiusInput = document.getElementById('object-radius');
+    const updateObjectButton = document.getElementById('update-object');
+
+    let objects = [];
+    let selectedObject = null;
+
+    // Update canvas size
+    canvasSizeSlider.addEventListener('input', () => {
+      const size = canvasSizeSlider.value;
+      canvas.width = size;
+      canvas.height = size;
+      document.getElementById('canvas-size-value').textContent = size;
+      drawScene();
+    });
+
+    // Update resolution (for example, adjusting pixel density)
+    resolutionSlider.addEventListener('input', () => {
+      const resolution = resolutionSlider.value;
+      document.getElementById('resolution-value').textContent = resolution;
+      // Adjust resolution-related logic here if necessary
+    });
+
+    // Add an object
+    addObjectButton.addEventListener('click', () => {
+      const newObject = {
+        id: `object${objects.length + 1}`,
+        size: 10,
+        x: 0,
+        y: 0,
+        color: '#ff0000',
+        radius: 10
+      };
+      objects.push(newObject);
+      const option = document.createElement('option');
+      option.value = newObject.id;
+      option.textContent = newObject.id;
+      objectDropdown.appendChild(option);
+      drawScene();
+    });
+
+    // Select an object to edit
+    objectDropdown.addEventListener('change', () => {
+      const objectId = objectDropdown.value;
+      selectedObject = objects.find(obj => obj.id === objectId);
+      if (selectedObject) {
+        sizeInput.value = selectedObject.size;
+        xInput.value = selectedObject.x;
+        yInput.value = selectedObject.y;
+        colorInput.value = selectedObject.color;
+        radiusInput.value = selectedObject.radius;
+      }
+    });
+
+    // Update object properties
+    updateObjectButton.addEventListener('click', () => {
+      if (selectedObject) {
+        selectedObject.size = parseFloat(sizeInput.value);
+        selectedObject.x = parseFloat(xInput.value);
+        selectedObject.y = parseFloat(yInput.value);
+        selectedObject.color = colorInput.value;
+        selectedObject.radius = parseFloat(radiusInput.value);
+        drawScene();
+      }
+    });
+
+    // Draw the scene
+    function drawScene() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      objects.forEach(obj => {
+        ctx.fillStyle = obj.color;
+        ctx.beginPath();
+        ctx.arc(
+          canvas.width / 2 + obj.x, 
+          canvas.height / 2 - obj.y, 
+          obj.radius, 
+          0, 
+          2 * Math.PI
+        );
+        ctx.fill();
+      });
+    }
+  </script>
+</body>
+</html>

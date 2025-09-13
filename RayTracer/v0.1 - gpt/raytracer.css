@@ -1,0 +1,56 @@
+body { 
+	display: flex; 
+	justify-content: center; 
+	align-items: center; 
+	height: 100vh; 
+	margin: 0; 
+	flex-direction: column;
+} 
+.container { 
+	position: relative;
+	display: flex; 
+	align-items: center; 
+} 
+#game { 
+	border: solid; 
+	/*margin-right: 20px; */
+} 
+#info { 
+	position: absolute;
+	left: 800px;
+	margin-left: 26px;
+	display: flex; 
+	flex-direction: column; 
+	justify-content: center;
+}
+div#timer {
+	display: flex;
+}
+div#flags {
+	display: flex;
+	align-items: center;
+}
+.info-text {
+	font-size: 42px;
+	font-family: math;
+}
+div#slider-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 400px;
+}
+#slider-container div {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	margin-top: 10px;
+}
+#slider-container a {
+	width: 150px;
+}
+#reset-button {
+	width: 150px;
+	height: 50px;
+}

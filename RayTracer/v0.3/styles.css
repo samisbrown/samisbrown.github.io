@@ -1,0 +1,138 @@
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 20px;
+}
+
+#canvas-container {
+  border: 2px solid #333;
+  background-color: #fff;
+  display: inline-block;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.collapsible {
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.collapsible-header {
+    display: flex; /* Align items horizontally */
+    justify-content: space-between; /* Space out text and symbol */
+    align-items: center; /* Center vertically */
+    padding: 10px;
+    margin: 0;
+    background-color: #f0f0f0;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer; /* Indicate it's clickable */
+}
+
+.collapsible-symbol {
+    font-weight: bold;
+    font-size: 18px; /* Adjust size */
+    color: #333; /* Match or contrast text color */
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.collapsible-content.show {
+  max-height: 500px; /* Adjust based on content height */
+}
+
+
+.controls {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  border: 2px solid #333;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 15px;
+}
+
+.control-group.centered {
+  justify-content: center;
+}
+
+.control-group label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+input[type="range"],
+input[type="number"],
+input[type="color"],
+button {
+  margin-left: 10px;
+}
+
+#object-controls, #canvas-controls, #renderer-controls {
+  /*margin-top: 20px;*/
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#object-controls h3, #canvas-controls h3, #renderer-controls h3 {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  text-align: center;
+  color: #333;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button#render {
+	background-color: #33b249;
+}
+
+button#render:hover {
+	background-color: #118011;
+}
+
+button.delete, button#render.rendering {
+  background-color: #ff4b4b;
+}
+
+button.delete:hover {
+  background-color: #d33a3a;
+}

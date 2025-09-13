@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ray Tracer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="canvas-container">
+    <canvas id="ray-tracer-canvas" width="500" height="500"></canvas>
+  </div>
+
+  <div class="controls">
+    <div id="canvas-controls">
+      <h3>Canvas</h3>
+      <div class="control-group">
+        <label>Canvas Size:
+        <input type="range" id="canvas-width" min="200" max="1000" value="500">
+        <span id="canvas-width-value">500</span> X
+        <input type="range" id="canvas-height" min="200" max="1000" value="500">
+        <span id="canvas-height-value">500</span> px
+		</label>
+      </div>
+      <div class="control-group">
+        <label for="pixel-size">Pixel Size:</label>
+        <input type="range" id="pixel-size" min="1" max="500" value="1">
+        <span id="pixel-size-value">1</span> pixels
+      </div>
+      <div class="control-group centered">
+        <button id="add-object">Add Object</button>
+      </div>
+      <div class="control-group">
+        <label for="object-dropdown">Select Object:</label>
+        <select id="object-dropdown"></select>
+        <button id="delete-object" class="delete">Delete Object</button>
+      </div>
+	</div>
+    <div id="renderer-controls">
+      <h3>Renderer</h3>
+      <div class="control-group">
+        <label for="num-threads">Number of Threads:</label>
+        <input type="range" id="num-threads" min="1" max="0" value="0">
+        <span id="num-threads-value">0</span>
+      </div>
+      <div class="control-group">
+        <label for="object-color">Background Color:</label>
+        <input type="color" id="background-color" value="#000000">
+      </div>
+	</div>
+    <div id="object-controls">
+      <h3>Edit Object</h3>
+      <div class="control-group">
+        <label for="object-size">Size:</label>
+        <input type="number" id="object-size" step="1" value="10">
+      </div>
+      <div class="control-group">
+        <label for="object-x">Position X:</label>
+        <input type="number" id="object-x" step="1" value="0">
+      </div>
+      <div class="control-group">
+        <label for="object-y">Position Y:</label>
+        <input type="number" id="object-y" step="1" value="0">
+      </div>
+      <div class="control-group">
+        <label for="object-color">Color:</label>
+        <input type="color" id="object-color" value="#ff0000">
+      </div>
+      <div class="control-group">
+        <label for="object-radius">Radius:</label>
+        <input type="number" id="object-radius" step="1" value="10">
+      </div>
+      <button id="update-object">Update Object</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

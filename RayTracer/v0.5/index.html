@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ray Tracer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="canvas-container">
+    <canvas id="ray-tracer-canvas" width="500" height="500"></canvas>
+  </div>
+
+  <div class="controls">
+    <div class="control-group centered">
+      <button id="render">Render</button>
+    </div>
+	<div class="collapsible">
+      <h3 class="collapsible-header">Renderer<span class="collapsible-symbol">+</span></h3>
+      <div class="collapsible-content" id="renderer-controls">
+	    <div class="control-group">
+          <label>Canvas Size:
+            <input type="range" id="canvas-width" min="200" max="1000" value="500">
+            <input type="number" id="canvas-width-box" name="canvas-width-box" value="500"> X
+            <input type="range" id="canvas-height" min="200" max="1000" value="500">
+            <input type="number" id="canvas-height-box" name="canvas-height-box" value="500">
+		  </label>
+        </div>
+        <div class="control-group">
+          <label for="pixel-size">Pixel Size:</label>
+          <input type="range" id="pixel-size" min="1" max="50" value="1">
+          <input type="number" id="pixel-size-box" name="pixel-size-box" value="1"> pixels
+        </div>
+        <div class="control-group">
+          <label for="num-threads">Number of Threads:</label>
+          <input type="range" id="num-threads" min="1" max="0" value="0">
+          <span id="num-threads-value">0</span>
+        </div>
+        <div class="control-group">
+          <label for="object-color">Background Color:</label>
+          <input type="color" id="background-color" value="#000000">
+        </div>
+	  </div>
+	</div>
+	<div class="collapsible">
+	  <h3 class="collapsible-header">Scene Objects<span class="collapsible-symbol">+</span></h3>
+	  <div class="collapsible-content" id="object-controls">
+		<div class="control-group centered">
+		  <button id="add-object">Add Object</button>
+		</div>
+		<div class="control-group">
+		  <label for="object-dropdown">Select Object:</label>
+		  <select id="object-dropdown"></select>
+		  <button id="delete-object" class="delete">Delete Object</button>
+		</div>
+		<div class="control-group">
+		  <label for="object-type-dropdown">Object Type:</label>
+		  <select id="object-type-dropdown">
+			<option value="Cube">Cube</option>
+			<option value="Sphere">Sphere</option>
+			<option value="other">Other</option>
+		  </select>
+		</div>
+		<!-- Controls for Cube -->
+		<div class="control-group cube-controls">
+		  <label for="object-height">Height:</label>
+		  <input type="number" id="object-height" step="1" value="10">
+		  <label for="object-width">Width:</label>
+		  <input type="number" id="object-width" step="1" value="10">
+		  <label for="object-depth">Depth:</label>
+		  <input type="number" id="object-depth" step="1" value="10">
+		</div>
+		<!-- Controls for Sphere -->
+		<div class="control-group sphere-controls">
+		  <label for="object-radius">Radius:</label>
+		  <input type="number" id="object-radius" step="1" value="10">
+		</div>
+		<!-- Common controls -->
+		<div class="control-group">
+          <label>Position:
+            X =<input type="number" id="object-pos-x" step="1" value="0">
+            Y =<input type="number" id="object-pos-y" step="1" value="0">
+            Z =<input type="number" id="object-pos-z" step="1" value="0">
+		  </label>
+		</div>
+		<div class="control-group">
+		  <label for="object-color">Color:</label>
+		  <input type="color" id="object-color" value="#ff0000">
+		</div>
+		<button id="update-object">Update Object</button>
+	  </div>
+	</div>
+    <div class="collapsible">
+      <h3 class="collapsible-header">Viewport<span class="collapsible-symbol">+</span></h3>
+	  <div class="collapsible-content" id="viewport-controls">
+        
+      </div>
+	</div>
+    <div class="collapsible">
+      <h3 class="collapsible-header">Camera<span class="collapsible-symbol">+</span></h3>
+	  <div class="collapsible-content" id="camera-controls">
+		<div class="control-group">
+          <label>Camera Position:
+            X =<input type="number" id="camera-pos-x" step="1" value="0">
+            Y =<input type="number" id="camera-pos-y" step="1" value="0">
+            Z =<input type="number" id="camera-pos-z" step="1" value="0">
+		  </label>
+		</div>
+		<div class="control-group">
+          <label>Camera Direction:
+            X =<input type="number" id="camera-dir-x" step="1" value="0">
+            Y =<input type="number" id="camera-dir-y" step="1" value="0">
+            Z =<input type="number" id="camera-dir-z" step="1" value="-1">
+		  </label>
+		</div>
+      </div>
+	</div>
+    <div class="collapsible">
+      <h3 class="collapsible-header">Lighting<span class="collapsible-symbol">+</span></h3>
+	  <div class="collapsible-content" id="lighting-controls">
+        
+      </div>
+	</div>
+  </div>
+  
+  <script type="module" src="script.js"></script>
+</body>
+</html>
