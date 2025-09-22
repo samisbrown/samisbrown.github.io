@@ -118,7 +118,6 @@ document.getElementById('num-threads-value').textContent = navigator.hardwareCon
 // For Module to be created
 // Declare Module-dependent functions
 recv_from_worker = null;
-renderScene = null;
 createModule().then((Module) => {
 	// Receive from a web worker
 	recv_from_worker = (event) => {
@@ -158,70 +157,46 @@ createModule().then((Module) => {
 		worker.onmessage = recv_from_worker;
 		workers.push(worker);
 	}
-
-	// Begin the render (when Render button is pushed)
-	renderScene = () => {
-		console.log(`render started, total pixels: ${Math.floor(CANVAS_SIZE.w / PIXEL_SIZE) * Math.floor(CANVAS_SIZE.h / PIXEL_SIZE)}`);
-		current_pixel = 0;
-		// Init the WASM Module
-		Module._SetCanvasSize(CANVAS_SIZE.w, CANVAS_SIZE.h);
-		Module._SetPixelSize(PIXEL_SIZE);
-		Module._SetBackgroundColor(BACKGROUND_COLOR.R, BACKGROUND_COLOR.G, BACKGROUND_COLOR.B);
-		Module._SetCameraPos(parseFloat(camXInput.value), parseFloat(camYInput.value), parseFloat(camZInput.value));
-		Module._SetCameraDir(parseFloat(camXDirInput.value), parseFloat(camYDirInput.value), parseFloat(camZDirInput.value));
-		// Add All Scene Objects
-		Object.keys(SceneObjects).forEach((Key) => {
-			let CurrObj = SceneObjects[Key];
-			switch (CurrObj.Type) {
-				case "Sphere":
-					Module._AddSphere(
-						CurrObj.Center.X,
-						CurrObj.Center.Y,
-						CurrObj.Center.Z,
-						CurrObj.Radius,
-						CurrObj.Color.R,
-						CurrObj.Color.G,
-						CurrObj.Color.B
-					)
-					break;
-			}
-		});
-		// Finish Init
-		Module._SetUp();
-
-		for (let i = 0; i < workerCount; i++) {
-			// Send Settings
-			/*workers[i].postMessage({
-				canvas_width: CANVAS_SIZE.w,
-				canvas_height: CANVAS_SIZE.h,
-				pixel_size: PIXEL_SIZE,
-				background_color: BACKGROUND_COLOR,
-				camera_pos: new math.Vector(
-					parseFloat(camXInput.value),
-					parseFloat(camYInput.value),
-					parseFloat(camZInput.value)
-				),
-				camera_dir: new math.Vector(
-					parseFloat(camXDirInput.value),
-					parseFloat(camYDirInput.value),
-					parseFloat(camZDirInput.value),
-					0
-				),
-				scene_objects: SceneObjects
-			});*/
-
-			if (i == 0) console.log(current_pixel);
-			let { x, y } = counter_to_xy(current_pixel++);
-			if (x >= CANVAS_SIZE.w || y >= CANVAS_SIZE.h) {
-				console.log("less pixels than workers, breaking");
-				break;
-			}
-			if (i == 0) console.log({ x, y });
-			//console.log(`Pixel ${current_pixel-1}: Sending to worker ${x}, ${y}, ${PIXEL_SIZE}`);
-			workers[i].postMessage({ x, y, size: PIXEL_SIZE });
-		}
-	};
 });
+
+
+// Begin the render (when Render button is pushed)
+function renderScene() {
+	console.log(`render started, total pixels: ${Math.floor(CANVAS_SIZE.w / PIXEL_SIZE) * Math.floor(CANVAS_SIZE.h / PIXEL_SIZE)}`);
+	current_pixel = 0;
+
+	for (let i = 0; i < workerCount; i++) {
+		// Send Settings to each worker
+		workers[i].postMessage({
+			CanvasWidth: CANVAS_SIZE.w,
+			CanvasHeight: CANVAS_SIZE.h,
+			PixelSize: PIXEL_SIZE,
+			BackgroundColor: BACKGROUND_COLOR,
+			CameraPos: {
+				"X": parseFloat(camXInput.value),
+				"Y": parseFloat(camYInput.value),
+				"Z": parseFloat(camZInput.value)
+			},
+			CameraDir: {
+				"X": parseFloat(camXDirInput.value),
+				"Y": parseFloat(camYDirInput.value),
+				"Z": parseFloat(camZDirInput.value)
+			},
+			SceneObjects: SceneObjects
+		});
+
+		// Send Pixel X and Y coords to ray trace
+		if (i == 0) console.log(current_pixel);
+		let { x, y } = counter_to_xy(current_pixel++);
+		if (x >= CANVAS_SIZE.w || y >= CANVAS_SIZE.h) {
+			console.log("less pixels than workers, breaking");
+			break;
+		}
+		if (i == 0) console.log({ x, y });
+		//console.log(`Pixel ${current_pixel-1}: Sending to worker ${x}, ${y}, ${PIXEL_SIZE}`);
+		workers[i].postMessage({ x, y, size: PIXEL_SIZE });
+	}
+}
 
 function lockSettings() {
 	// Close all headers
@@ -265,6 +240,10 @@ renderButton.addEventListener('click', () => {
 		renderButton.textContent = "Render";
 		renderButton.classList.remove('rendering');
 		rendering = false;
+		for (let i = 0; i < workerCount; i++) {
+			// Send Settings to each worker
+			workers[i].postMessage("CancelRender");
+		}
 	}
 });
 

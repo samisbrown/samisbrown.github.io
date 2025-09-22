@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
-<body>
+<html><head></head><body>
 <style>
-a {
+button {
+    width: 150px;
+    height: 75px;
 	font: bold 11px Arial;
 	color: #000000;
 	background-color: #EEEEEE;	
@@ -13,13 +14,22 @@ a {
 	border-left: 1px solid #CCCCCC;
 }
 </style>
-<div style="display: flex; justify-content: space-around">
-	<a href="./v0.1 - gpt/">Version 0.1</a>
-	<a href="./v0.2 - gpt/">Version 0.2</a>
-	<a href="./v0.3/">Version 0.3</a>
-	<a href="./v0.4/">Version 0.4</a>
-	<a href="./v0.5/">Version 0.5</a>
-	<a href="./wasm test/">WASM Test</a>
+<div style="display: flex;justify-content: space-around;flex-direction: column;align-items: center;">
+	<h1>Pure JS</h1>
+    <div style="width: 100%;display: flex;justify-content: space-around;">
+	<button onclick="location.href='./v0.1 - gpt/'">Version 0.1</button>
+	<button onclick="location.href='./v0.2 - gpt/'">Version 0.2</button>
+	<button onclick="location.href='./v0.3/'">Version 0.3</button>
+	<button onclick="location.href='./v0.4/'">Version 0.4</button>
+	<button onclick="location.href='./v0.5/'">Version 0.5</button>
+    </div>
+	<h1>WASM</h1>
+    <div style="width: 100%;display: flex;justify-content: space-around;">
+	<button onclick="location.href='./wasm test/'">WASM Test</button>
+	<button onclick="location.href='./v0.6 - wasm port/'">Version 0.6</button>
+    </div>
+    
  </div>
-</body>
-</html>
+
+
+</body></html>

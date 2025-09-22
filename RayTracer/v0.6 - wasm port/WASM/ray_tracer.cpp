@@ -3,6 +3,7 @@
 #include "SceneObject.h"
 #include "Color.h"
 #include "Sphere.h"
+#include <stdint.h>
 
 // Constants
 const float PI = 3.14159f;
@@ -87,6 +88,7 @@ extern "C"
 	EMSCRIPTEN_KEEPALIVE
 	void TraceRay(const int PixelX, const int PixelY, uint8_t* WriteColorToPtr)
 	{
+		std::cout << AllObjs.Num() << std::endl;
 		// Calculate the Ray based on PixelXY and viewport
 		const float U = (PixelX + PixelSize) / (2.f * CanvasWidth);
 		const float V = (PixelY + PixelSize) / (2.f * CanvasHeight);
@@ -137,9 +139,10 @@ extern "C"
 	EMSCRIPTEN_KEEPALIVE
 	void CleanUp()
 	{
-		for (int ObjIndex = 0; ObjIndex < AllObjs.Num(); ++ObjIndex)
+		for (int ObjIndex = AllObjs.Num() - 1; ObjIndex >= 0; --ObjIndex)
 		{
 			delete AllObjs.GetElement(ObjIndex);
+			AllObjs.RemoveElement(ObjIndex);
 		}
 	}
 }

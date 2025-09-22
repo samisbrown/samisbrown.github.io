@@ -9,38 +9,44 @@ const plane_dist = 500;
 createModule().then((Module) => {
 	self.onmessage = function (event) {
 		// If we received settings, do not reply
-		/*if (event.data.hasOwnProperty("canvas_width")) {
-			({canvas_width, canvas_height, pixel_size, background_color, camera_pos, camera_dir, scene_objects} = event.data);
-			// Repackage/Restructure stuff (because when messages posted, objects lose prototypes and just
-			// become arbitrary objects
-			background_color = new math.Color(background_color);
-			camera_pos = new math.Vector(camera_pos);
-			camera_dir = new math.Vector(camera_dir);
-			// Calculate Camera Basis
-			let up = new math.Vector(0, 1, 0);
-			camera_right = camera_dir.cross(up);
-			camera_up = camera_right.cross(camera_dir);
-			// Calculate Viewport 
-			let fov = 60 * Math.PI/180;
-			let near_dist = 5.0;
-			let aspect_ratio = canvas_width / canvas_height;
-			viewport_height = 2 * near_dist * Math.tan(fov/2);
-			viewport_width = viewport_height * aspect_ratio;
-			viewport_center = camera_pos.add(camera_dir.mult(near_dist));
-			// Repackage Scene Objects
-			Object.keys(scene_objects).forEach((key) => {
-				switch (scene_objects[key].type) {
+		if (event.data.hasOwnProperty("CanvasWidth")) {
+			console.log("Web Worker received settings, setting up...");
+			({CanvasWidth, CanvasHeight, PixelSize, BackgroundColor, CameraPos, CameraDir, SceneObjects} = event.data);
+			
+			// Init the WASM Module
+			Module._SetCanvasSize(CanvasWidth, CanvasHeight);
+			Module._SetPixelSize(PixelSize);
+			Module._SetBackgroundColor(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B);
+			Module._SetCameraPos(CameraPos.X, CameraPos.Y, CameraPos.Z);
+			Module._SetCameraDir(CameraDir.X, CameraDir.Y, CameraDir.Z);
+			// Add All Scene Objects
+			Object.keys(SceneObjects).forEach((Key) => {
+				let CurrObj = SceneObjects[Key];
+				switch (CurrObj.Type) {
 					case "Sphere":
-						scene_objects[key] = new math.Sphere(
-							new math.Vector(scene_objects[key].center),
-							scene_objects[key].radius,
-							new math.Color(scene_objects[key].color)
+						console.log(CurrObj);
+						console.log(Module);
+						Module._AddSphere(
+							CurrObj.Center.X,
+							CurrObj.Center.Y,
+							CurrObj.Center.Z,
+							CurrObj.Radius,
+							CurrObj.Color.R,
+							CurrObj.Color.G,
+							CurrObj.Color.B
 						);
 						break;
-				};
+				}
 			});
-			return;
-		}*/
+			// Finish Init
+			Module._SetUp();
+		}
+
+		// If we received "CancelRender", Clean up
+		if (event.data == "CancelRender")
+		{
+			Module._CleanUp();
+		}
 
 		// If we don't receive settings, we received a pixel to draw
 		const { x, y, size } = event.data;
