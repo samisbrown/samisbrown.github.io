@@ -90,8 +90,8 @@ extern "C"
 	{
 		std::cout << AllObjs.Num() << std::endl;
 		// Calculate the Ray based on PixelXY and viewport
-		const float U = (PixelX + PixelSize) / (2.f * CanvasWidth);
-		const float V = (PixelY + PixelSize) / (2.f * CanvasHeight);
+		const float U = (PixelX + (PixelSize / 2.f)) / CanvasWidth;
+		const float V = (PixelY + (PixelSize / 2.f)) / CanvasHeight;
 		const Vector3D RayDest = ViewportCenter + (CameraRight * (U - 0.5f) * ViewportWidth) + (CameraUp * (V - 0.5f) * ViewportHeight);
 		
 		const Ray RayToTrace = Ray(CameraPos, (RayDest - CameraPos).Normalize());
