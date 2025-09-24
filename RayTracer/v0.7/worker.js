@@ -11,7 +11,7 @@ createModule().then((Module) => {
 		// If we received settings, do not reply
 		if (event.data.hasOwnProperty("CanvasWidth")) {
 			console.log("Web Worker received settings, setting up...");
-			({CanvasWidth, CanvasHeight, PixelSize, BackgroundColor, CameraPos, CameraDir, SceneObjects} = event.data);
+			({CanvasWidth, CanvasHeight, PixelSize, BackgroundColor, CameraPos, CameraDir, SceneObjects, Lights} = event.data);
 			
 			// Init the WASM Module
 			Module._SetCanvasSize(CanvasWidth, CanvasHeight);
@@ -35,6 +35,25 @@ createModule().then((Module) => {
 							CurrObj.Color.G,
 							CurrObj.Color.B
 						);
+						break;
+				}
+			});
+			// Add all the lights (all of the lights)
+			Object.keys(Lights).forEach((Key) => {
+				let CurrLight = Lights[Key];
+				switch (CurrLight.Type) {
+					case "PointLight":
+						Module._AddLight(
+							CurrLight.Pos.X,
+							CurrLight.Pos.Y,
+							CurrLight.Pos.Z,
+							CurrLight.Color.R,
+							CurrLight.Color.G,
+							CurrLight.Color.B
+						);
+						break;
+					case "SpotlightLight":
+						console.log("Spotlight not implemented");
 						break;
 				}
 			});

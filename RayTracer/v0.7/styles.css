@@ -96,7 +96,7 @@ input[type="number"] {
 	width: 50px;
 }
 
-#object-controls, #canvas-controls, #renderer-controls {
+#object-controls, #canvas-controls, #renderer-controls, #lighting-controls {
   /*margin-top: 20px;*/
   width: 100%;
   max-width: 600px;

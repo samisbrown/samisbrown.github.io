@@ -3,6 +3,7 @@
 #include "SceneObject.h"
 #include "Color.h"
 #include "Sphere.h"
+#include "Light.h"
 #include <stdint.h>
 
 // Constants
@@ -12,6 +13,7 @@ const float FOV = 60.f * PI / 180.f;
 const float NEAR_DIST = 5.f;
 
 TArray<SceneObject*> AllObjs = TArray<SceneObject*>();
+TArray<Light*> AllLights = TArray<Light*>();
 int CanvasWidth = 0;
 int CanvasHeight = 0;
 float AspectRatio = 0.f;
@@ -82,13 +84,22 @@ extern "C"
 	}
 }
 
+// Add Lights
+extern "C"
+{
+	EMSCRIPTEN_KEEPALIVE
+	void AddLight(const float InX, const float InY, const float InZ, const uint8_t InRed, const uint8_t InGreen, const uint8_t InBlue)
+	{
+		AllLights.AddElement(new Light(Vector3D(InX, InY, InZ, 1.f), Color(InRed, InGreen, InBlue)));
+	}
+}
+
 // The infamous ray trace function
 extern "C"
 {
 	EMSCRIPTEN_KEEPALIVE
 	void TraceRay(const int PixelX, const int PixelY, uint8_t* WriteColorToPtr)
 	{
-		std::cout << AllObjs.Num() << std::endl;
 		// Calculate the Ray based on PixelXY and viewport
 		const float U = (PixelX + (PixelSize / 2.f)) / CanvasWidth;
 		const float V = (PixelY + (PixelSize / 2.f)) / CanvasHeight;

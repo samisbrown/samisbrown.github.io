@@ -1,2 +1,2 @@
 call ../../emsdk/emsdk_env.bat
-em++ ray_tracer.cpp Vector3D.cpp Sphere.cpp Ray.cpp Mat3D.cpp Color.cpp -s NO_EXIT_RUNTIME=1 -s MODULARIZE=1 -s "EXPORTED_RUNTIME_METHODS=['HEAPU8']" -s "EXPORTED_FUNCTIONS=['_malloc', '_free']" -s EXPORT_NAME="createModule" -o ray_tracer.js
+em++ ray_tracer.cpp Vector3D.cpp Sphere.cpp Ray.cpp Mat3D.cpp Color.cpp Light.cpp -s NO_EXIT_RUNTIME=1 -s MODULARIZE=1 -s "EXPORTED_RUNTIME_METHODS=['HEAPU8']" -s "EXPORTED_FUNCTIONS=['_malloc', '_free']" -s EXPORT_NAME="createModule" -o ray_tracer.js

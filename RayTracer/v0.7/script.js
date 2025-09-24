@@ -107,7 +107,7 @@ let SceneObjects = {
 
 let Lights = {
 	"Main Light :)": {
-		"Type": "Point",
+		"Type": "PointLight",
 		"Pos": {
 			"X": 20,
 			"Y": 50,
@@ -136,6 +136,14 @@ Object.keys(SceneObjects).forEach((key) => {
 	option.value = key;
 	option.textContent = key;
 	objectDropdown.appendChild(option);
+});
+
+// Init Lights GUI
+Object.keys(Lights).forEach((key) => {
+	const option = document.createElement('option');
+	option.value = key;
+	option.textContent = key;
+	lightDropdown.appendChild(option);
 });
 
 // Init Threads Slider
@@ -211,7 +219,8 @@ function renderScene() {
 				"Y": parseFloat(camYDirInput.value),
 				"Z": parseFloat(camZDirInput.value)
 			},
-			SceneObjects: SceneObjects
+			SceneObjects: SceneObjects,
+			Lights: Lights
 		});
 
 		// Send Pixel X and Y coords to ray trace
@@ -422,12 +431,12 @@ updateObjectButton.addEventListener('click', () => {
 
 addLightButton.addEventListener('click', () => {
 	const newLightName = prompt("Enter a name for the light: ");
+	let LightColor = hexToRGB(lightColorInput.value);
 	let newLight;
 	switch (lightTypeDropdown.value) {
 		case "PointLight":
-			let LightColor = hexToRGB(lightColorInput.value);
 			newLight = {
-				"Type": "Point",
+				"Type": "PointLight",
 				"Pos": {
 					"X": parseFloat(lightXInput.value),
 					"Y": parseFloat(lightYInput.value),
@@ -442,6 +451,25 @@ addLightButton.addEventListener('click', () => {
 			break;
 		case "SpotlightLight":
 			console.log("Spotlight not implemented :(");
+			newLight = {
+				"Type": "SpotlightLight",
+				"Pos": {
+					"X": parseFloat(lightXInput.value),
+					"Y": parseFloat(lightYInput.value),
+					"Z": parseFloat(lightZInput.value)
+				},
+				"Color": {
+					"R": LightColor.R,
+					"G": LightColor.G,
+					"B": LightColor.B
+				},
+				"Dir": {
+					"X": parseFloat(lightDirXInput.value),
+					"Y": parseFloat(lightDirYInput.value),
+					"Z": parseFloat(lightDirZInput.value)
+				},
+				"Angle": parseFloat(lightAngleInput.value)
+			}
 			break;
 	}
 
@@ -464,6 +492,8 @@ lightDropdown.addEventListener('change', () => {
 	}*/
 	//sizeInput.value = selectedObject.size;
 	lightTypeDropdown.value = selectedLight.Type;
+	// Update lightTypeDropdown with the new Light type
+	lightTypeDropdown.dispatchEvent(new Event("change"));
 	lightXInput.value = selectedLight.Pos.X;
 	lightYInput.value = selectedLight.Pos.Y;
 	lightZInput.value = selectedLight.Pos.Z;
@@ -497,6 +527,7 @@ lightTypeDropdown.addEventListener('change', () => {
 
 	// Show controls based on the selected object type
 	if (lightType === 'SpotlightLight') {
+		console.log("reshowing spotlight ctrls");
 		spotlightControls.style.display = 'block';
 	}
 });
@@ -509,15 +540,18 @@ updateLightButton.addEventListener('click', () => {
 
 	if (selectedLight) {
 		//selectedObject.size = parseFloat(sizeInput.value);
+		selectedLight.Type = lightTypeDropdown.value;
 		selectedLight.Pos.X = parseFloat(lightXInput.value);
 		selectedLight.Pos.Y = parseFloat(lightYInput.value);
 		selectedLight.Pos.Z = parseFloat(lightZInput.value);
 		selectedLight.Color = hexToRGB(lightColorInput.value);
 		if (lightTypeDropdown.value == "SpotlightLight") {
 			// If we updated a spotlight
-			selectedLight.Dir.X = parseFloat(lightDirXInput.value);
-			selectedLight.Dir.Y = parseFloat(lightDirYInput.value);
-			selectedLight.Dir.Z = parseFloat(lightDirZInput.value);
+			selectedLight.Dir = {
+				"X": parseFloat(lightDirXInput.value),
+				"Y": parseFloat(lightDirYInput.value),
+				"Z": parseFloat(lightDirZInput.value)
+			};
 			selectedLight.Angle = parseFloat(lightAngleInput.value);
 		}
 	}
