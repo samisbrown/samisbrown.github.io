@@ -118,8 +118,46 @@
     <div class="collapsible">
       <h3 class="collapsible-header">Lighting<span class="collapsible-symbol">+</span></h3>
 	  <div class="collapsible-content" id="lighting-controls">
-        
-      </div>
+		<div class="control-group centered">
+		  <button id="add-light">Add New Light</button>
+		</div>
+		<div class="control-group">
+    	  <label for="light-dropdown">Select Light:</label>
+			<select id="light-dropdown"></select>
+			<button id="delete-light" class="delete">Delete Light</button>
+		</div>
+		<div class="control-group">
+		  <label for="light-type-dropdown">Light Type:</label>
+		  <select id="light-type-dropdown">
+		    <option value="PointLight">Point Light</option>
+			<option value="SpotlightLight">Spotlight</option>
+		  </select>
+		</div>
+		<!-- Common controls -->
+		<div class="control-group">
+		  <label>
+		    Position:
+			X =<input type="number" id="light-pos-x" step="any" value="0">
+			Y =<input type="number" id="light-pos-y" step="any" value="0">
+			Z =<input type="number" id="light-pos-z" step="any" value="0">
+		  </label>
+		  <!-- Light Color -->
+		  <label for="light-color">Light Color:</label>
+			<input type="color" id="light-color" value="#ffffff">
+		</div>
+		<!-- Controls Spotlight -->
+		<div class="control-group light-spotlight-controls">
+		  <label>
+	        Direction:
+			X =<input type="number" id="light-spotlight-dir-x" step="any" value="0">
+			Y =<input type="number" id="light-spotlight-dir-y" step="any" value="0">
+			Z =<input type="number" id="light-spotlight-dir-z" step="any" value="0">
+		  </label>
+		  <label for="light-spotlight-angle">Angle (Degrees):</label>
+		    <input type="number" id="light-spotlight-angle" step="any" value="15">
+		</div>
+		<button id="update-light">Update Light</button>
+	  </div>
 	</div>
   </div>
   

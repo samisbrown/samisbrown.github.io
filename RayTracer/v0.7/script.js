@@ -22,6 +22,19 @@ const zInput = document.getElementById('object-pos-z');
 const colorInput = document.getElementById('object-color');
 const backgroundColorInput = document.getElementById('background-color');
 const radiusInput = document.getElementById('object-radius');
+const addLightButton = document.getElementById('add-light');
+const lightDropdown = document.getElementById('light-dropdown');
+const deleteLightButton = document.getElementById('delete-light');
+const lightTypeDropdown = document.getElementById('light-type-dropdown');
+const lightXInput = document.getElementById('light-pos-x');
+const lightYInput = document.getElementById('light-pos-y');
+const lightZInput = document.getElementById('light-pos-z');
+const lightColorInput = document.getElementById('light-color');
+const lightDirXInput = document.getElementById('light-spotlight-dir-x');
+const lightDirYInput = document.getElementById('light-spotlight-dir-y');
+const lightDirZInput = document.getElementById('light-spotlight-dir-z');
+const lightAngleInput = document.getElementById('light-spotlight-angle');
+const updateLightButton = document.getElementById('update-light');
 const camXInput = document.getElementById('camera-pos-x');
 const camYInput = document.getElementById('camera-pos-y');
 const camZInput = document.getElementById('camera-pos-z');
@@ -88,6 +101,22 @@ let SceneObjects = {
 			"R": 0,
 			"G": 255,
 			"B": 0
+		}
+	}
+};
+
+let Lights = {
+	"Main Light :)": {
+		"Type": "Point",
+		"Pos": {
+			"X": 20,
+			"Y": 50,
+			"Z": -100
+		},
+		"Color": {
+			"R": 255,
+			"G": 255,
+			"B": 255
 		}
 	}
 };
@@ -388,6 +417,109 @@ updateObjectButton.addEventListener('click', () => {
 		selectedObject.Center.Z = parseFloat(zInput.value);
 		selectedObject.Radius = parseFloat(radiusInput.value);
 		selectedObject.Color = hexToRGB(colorInput.value);
+	}
+});
+
+addLightButton.addEventListener('click', () => {
+	const newLightName = prompt("Enter a name for the light: ");
+	let newLight;
+	switch (lightTypeDropdown.value) {
+		case "PointLight":
+			let LightColor = hexToRGB(lightColorInput.value);
+			newLight = {
+				"Type": "Point",
+				"Pos": {
+					"X": parseFloat(lightXInput.value),
+					"Y": parseFloat(lightYInput.value),
+					"Z": parseFloat(lightZInput.value)
+				},
+				"Color": {
+					"R": LightColor.R,
+					"G": LightColor.G,
+					"B": LightColor.B
+				}
+			}
+			break;
+		case "SpotlightLight":
+			console.log("Spotlight not implemented :(");
+			break;
+	}
+
+	Lights[newLightName] = newLight;
+	const option = document.createElement('option');
+	option.value = newLightName;
+	option.textContent = newLightName;
+	lightDropdown.appendChild(option);
+	lightDropdown.value = newLightName;
+});
+
+lightDropdown.addEventListener('change', () => {
+	const lightName = lightDropdown.value;
+	const selectedLight = Lights[lightName];
+
+	/** I think below will need to change to accommodate
+	  * for spotlight bits (dir and angle)
+	if (selectedLight.radius) {
+		radiusInput.value = selectedObject.Radius;
+	}*/
+	//sizeInput.value = selectedObject.size;
+	lightTypeDropdown.value = selectedLight.Type;
+	lightXInput.value = selectedLight.Pos.X;
+	lightYInput.value = selectedLight.Pos.Y;
+	lightZInput.value = selectedLight.Pos.Z;
+	lightColorInput.value = RGBToHex(selectedLight.Color);
+	//radiusInput.value = selectedObject.radius;
+});
+// Init values (executes above event one time on startup)
+lightDropdown.dispatchEvent(new Event("change"));
+
+deleteLightButton.addEventListener('click', () => {
+	const lightName = lightDropdown.value;
+	const selectedLight = Lights[lightName];
+
+	if (selectedLight) {
+		delete Lights[lightName];
+
+		const options = Array.from(lightDropdown.options);
+		const optionToDelete = options.find(opt => opt.value === lightName);
+		if (optionToDelete) lightDropdown.removeChild(optionToDelete);
+	}
+});
+
+lightTypeDropdown.addEventListener('change', () => {
+	const lightType = lightTypeDropdown.value;
+
+	// Get all controls
+	const spotlightControls = document.querySelector('.light-spotlight-controls');
+	
+	// Hide all controls first
+	spotlightControls.style.display = 'none';
+
+	// Show controls based on the selected object type
+	if (lightType === 'SpotlightLight') {
+		spotlightControls.style.display = 'block';
+	}
+});
+// Init values (executes above event one time on startup)
+lightTypeDropdown.dispatchEvent(new Event("change"));
+
+updateLightButton.addEventListener('click', () => {
+	const lightName = lightDropdown.value;
+	const selectedLight = Lights[lightName];
+
+	if (selectedLight) {
+		//selectedObject.size = parseFloat(sizeInput.value);
+		selectedLight.Pos.X = parseFloat(lightXInput.value);
+		selectedLight.Pos.Y = parseFloat(lightYInput.value);
+		selectedLight.Pos.Z = parseFloat(lightZInput.value);
+		selectedLight.Color = hexToRGB(lightColorInput.value);
+		if (lightTypeDropdown.value == "SpotlightLight") {
+			// If we updated a spotlight
+			selectedLight.Dir.X = parseFloat(lightDirXInput.value);
+			selectedLight.Dir.Y = parseFloat(lightDirYInput.value);
+			selectedLight.Dir.Z = parseFloat(lightDirZInput.value);
+			selectedLight.Angle = parseFloat(lightAngleInput.value);
+		}
 	}
 });
 
