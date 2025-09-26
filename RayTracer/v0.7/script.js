@@ -201,6 +201,7 @@ createModule().then((Module) => {
 function renderScene() {
 	console.log(`render started, total pixels: ${Math.floor(CANVAS_SIZE.w / PIXEL_SIZE) * Math.floor(CANVAS_SIZE.h / PIXEL_SIZE)}`);
 	current_pixel = 0;
+	workers_finished = 0;
 
 	for (let i = 0; i < workerCount; i++) {
 		// Send Settings to each worker

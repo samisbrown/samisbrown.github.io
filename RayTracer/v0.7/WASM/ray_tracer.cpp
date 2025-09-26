@@ -59,7 +59,7 @@ extern "C"
 	EMSCRIPTEN_KEEPALIVE
 	void SetCameraDir(const float InX, const float InY, const float InZ)
 	{
-		CameraDir = Vector3D(InX, InY, InZ, 0.f);
+		CameraDir = Vector3D(InX, InY, InZ, 0.f).Normalize();
 	}
 
 	EMSCRIPTEN_KEEPALIVE
@@ -133,8 +133,29 @@ extern "C"
 		}
 		if (HitObj != nullptr)
 		{
+			const Vector3D HitPoint = RayToTrace.StartPos + (RayToTrace.Direction * ClosestPoint);
+			const Vector3D Normal = HitObj->Normal(HitPoint);
 			// If we did end up hitting an object, change the result color from background
-			ResultColor = HitObj->GetColor();
+			//ResultColor = HitObj->GetColor();
+			// This is where we do Phong-Blinn >:)
+			const Color AmbientLight = Color(102, 102, 102);
+			const Color DiffuseLight = Color(255, 255, 255);
+			const Color SpecularLight = Color(255, 255, 255);
+			const float Shininess = 10.f;
+			ResultColor = AmbientLight * HitObj->GetColor();
+			for (int LightIndex = 0; LightIndex < AllLights.Num(); ++LightIndex)
+			{
+				// For every single light
+				const Vector3D DirToLightFromHit = (AllLights.GetElement(LightIndex)->Position - HitPoint).Normalize();
+				// Add Diffuse
+				const float DiffuseDotProduct = Normal * DirToLightFromHit;
+				ResultColor += AllLights.GetElement(LightIndex)->LightColor * HitObj->GetColor() * (DiffuseDotProduct < 0.f ? 0.f : DiffuseDotProduct);
+				// Add Specular
+				// First must calculate halfway vector
+				const Vector3D HalfwayVector = (DirToLightFromHit - RayToTrace.Direction).Normalize();
+				const float SpecularDotProduct = Normal * HalfwayVector;
+				ResultColor += AllLights.GetElement(LightIndex)->LightColor * powf((SpecularDotProduct < 0.f ? 0.f : SpecularDotProduct), Shininess);
+			}
 		}
 
 		// Now return the Color into the ColorPointer
@@ -154,6 +175,11 @@ extern "C"
 		{
 			delete AllObjs.GetElement(ObjIndex);
 			AllObjs.RemoveElement(ObjIndex);
+		}
+		for (int LightIndex = AllLights.Num() - 1; LightIndex >= 0; --LightIndex)
+		{
+			delete AllLights.GetElement(LightIndex);
+			AllLights.RemoveElement(LightIndex);
 		}
 	}
 }
