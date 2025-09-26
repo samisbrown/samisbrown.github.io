@@ -136,9 +136,8 @@ extern "C"
 			const Vector3D HitPoint = RayToTrace.StartPos + (RayToTrace.Direction * ClosestPoint);
 			const Vector3D Normal = HitObj->Normal(HitPoint);
 			// If we did end up hitting an object, change the result color from background
-			//ResultColor = HitObj->GetColor();
 			// This is where we do Phong-Blinn >:)
-			const Color AmbientLight = Color(102, 102, 102);
+			const Color AmbientLight = Color(51, 51, 51);
 			const Color DiffuseLight = Color(255, 255, 255);
 			const Color SpecularLight = Color(255, 255, 255);
 			const float Shininess = 10.f;
