@@ -166,7 +166,10 @@ createModule().then((Module) => {
 				renderButton.textContent = "Render";
 				renderButton.classList.remove('rendering');
 				rendering = false;
-				Module._CleanUp(); // Clean up all the rendering memory
+				// Clean up all the rendering memory
+				for (let i = 0; i < workerCount; i++) {
+					workers[i].postMessage("CancelRender");
+				}
 			}
 		} else {
 			//If not sent all pixels, send
