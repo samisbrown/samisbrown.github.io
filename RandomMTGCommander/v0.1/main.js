@@ -141,7 +141,7 @@ function main()
 	if (affirmation.toLowerCase() != "i love sam browning") 
 	{
 		alert("Wrong!");
-		//window.close();
+		window.close();
 	}
 	else
 	{
