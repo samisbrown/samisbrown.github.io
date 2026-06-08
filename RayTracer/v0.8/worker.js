@@ -11,7 +11,7 @@ createModule().then((Module) => {
 		// If we received settings, do not reply
 		if (event.data.hasOwnProperty("CanvasWidth")) {
 			console.log("Web Worker received settings, setting up...");
-			({CanvasWidth, CanvasHeight, PixelSize, BackgroundColor, CameraPos, CameraDir, SceneObjects, Lights} = event.data);
+			({CanvasWidth, CanvasHeight, PixelSize, BackgroundColor, CameraPos, CameraDir, SceneObjects, AmbientLightColor, Lights} = event.data);
 			
 			// Init the WASM Module
 			Module._SetCanvasSize(CanvasWidth, CanvasHeight);
@@ -19,6 +19,7 @@ createModule().then((Module) => {
 			Module._SetBackgroundColor(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B);
 			Module._SetCameraPos(CameraPos.X, CameraPos.Y, CameraPos.Z);
 			Module._SetCameraDir(CameraDir.X, CameraDir.Y, CameraDir.Z);
+			Module._SetAmbientLightColor(AmbientLightColor.R, AmbientLightColor.G, AmbientLightColor.B);
 			// Add All Scene Objects
 			Object.keys(SceneObjects).forEach((Key) => {
 				let CurrObj = SceneObjects[Key];

@@ -11,7 +11,7 @@ public:
 	Sphere(const Vector3D& InCenter, const float InRadius, const Color& InObjColor);
 	
 	// Function Overrides
-	virtual float Intersect(const Ray& IntersectRay) const override;
+	virtual TArray<float> Intersect(const Ray& IntersectRay) const override;
 	virtual Vector3D Normal(const Vector3D& PointVector) const override;
 
 private:

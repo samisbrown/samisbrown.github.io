@@ -22,6 +22,7 @@ const zInput = document.getElementById('object-pos-z');
 const colorInput = document.getElementById('object-color');
 const backgroundColorInput = document.getElementById('background-color');
 const radiusInput = document.getElementById('object-radius');
+const ambientLightColorInput = document.getElementById('ambient-light-color');
 const addLightButton = document.getElementById('add-light');
 const lightDropdown = document.getElementById('light-dropdown');
 const deleteLightButton = document.getElementById('delete-light');
@@ -224,6 +225,7 @@ function renderScene() {
 				"Z": parseFloat(camZDirInput.value)
 			},
 			SceneObjects: SceneObjects,
+			AmbientLightColor: hexToRGB(ambientLightColorInput.value),
 			Lights: Lights
 		});
 
@@ -371,7 +373,7 @@ objectDropdown.addEventListener('change', () => {
 	const objectName = objectDropdown.value;
 	const selectedObject = SceneObjects[objectName];
 	
-	if (selectedObject.radius) {
+	if (selectedObject.Radius) {
 		radiusInput.value = selectedObject.Radius;
 	}
 	//sizeInput.value = selectedObject.size;

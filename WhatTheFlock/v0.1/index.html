@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What The Flock</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .controls {
+      margin: 20px 0;
+    }
+    .control-group {
+      margin-bottom: 15px;
+    }
+    #canvas-container {
+      border: 1px solid black;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <h1>What The Flock</h1>
+  <div id="canvas-container">
+    <canvas id="ray-tracer-canvas" width="1000" height="1000"></canvas>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+  <script type="module" src="./util.js"></script>
+  <script type="module" src="./bird.js"></script>
+</body>
+</html>

@@ -24,6 +24,7 @@ public:
 	Vector3D& operator-=(const float Scalar);
 	Vector3D& operator*=(const float Scalar);
 	Vector3D& operator/=(const float Scalar);
+	bool operator==(const Vector3D& OtherVector) const;
 
 	// Other Class Methods
 	Vector3D Cross(const Vector3D& OtherVector) const;

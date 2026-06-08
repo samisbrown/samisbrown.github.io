@@ -115,6 +115,11 @@ Vector3D& Vector3D::operator/=(const float Scalar)
 	return *this;
 }
 
+bool Vector3D::operator==(const Vector3D& OtherVector) const
+{
+	return X == OtherVector.X && Y == OtherVector.Y && Z == OtherVector.Z && W = OtherVector.W;
+}
+
 Vector3D Vector3D::Cross(const Vector3D& OtherVector) const
 {
 	return Vector3D(
@@ -137,7 +142,10 @@ float Vector3D::LengthSqr() const
 
 Vector3D& Vector3D::Normalize()
 {
-	this->operator/=(Length());
+	if (!IsNormalized())
+	{
+		this->operator/=(Length());
+	}
 	return *this;
 }
 

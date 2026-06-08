@@ -8,6 +8,7 @@
 
 // Constants
 const float PI = 3.14159f;
+const float EPSILON = 0.0001f;
 const int PLANE_DIST = 500;
 const float FOV = 60.f * PI / 180.f;
 const float NEAR_DIST = 5.f;
@@ -26,6 +27,7 @@ Vector3D CameraPos;
 Vector3D CameraRight;
 Vector3D CameraUp;
 Vector3D CameraDir;
+Color AmbientLight;
 
 // Init Render Functions
 extern "C"
@@ -62,6 +64,11 @@ extern "C"
 		CameraDir = Vector3D(InX, InY, InZ, 0.f).Normalize();
 	}
 
+	EMSCRIPTEN_KEEPALIVE
+	void SetAmbientLightColor(const uint8_t InRed, const uint8_t InGreen, const uint8_t InBlue)
+	{
+		AmbientLight = Color(InRed, InGreen, InBlue);
+	}
 	EMSCRIPTEN_KEEPALIVE
 	void SetUp()
 	{
@@ -113,20 +120,20 @@ extern "C"
 		SceneObject* HitObj = nullptr;
 		for (int ObjIndex = 0; ObjIndex < AllObjs.Num(); ++ObjIndex)
 		{
-			float ObjHitPoint = AllObjs.GetElement(ObjIndex)->Intersect(RayToTrace);
-			if (ObjHitPoint > 0.f)
+			TArray<float> ObjHitPoints = AllObjs.GetElement(ObjIndex)->Intersect(RayToTrace);
+			if (ObjHitPoints.Num() > 0 && ObjHitPoints.GetElement(0) > 0.f)
 			{
 				// We did hit an object
 				if (HitObj == nullptr)
 				{
 					// If its the first obj we've hit
-					ClosestPoint = ObjHitPoint;
+					ClosestPoint = ObjHitPoints.GetElement(0);
 					HitObj = AllObjs.GetElement(ObjIndex);
 				}
-				else if (ObjHitPoint < ClosestPoint)
+				else if (ObjHitPoints.GetElement(0) < ClosestPoint)
 				{
 					// Otherwise we check if this object is closer than the current closest
-					ClosestPoint = ObjHitPoint;
+					ClosestPoint = ObjHitPoints.GetElement(0);
 					HitObj = AllObjs.GetElement(ObjIndex);
 				}
 			}
@@ -137,23 +144,45 @@ extern "C"
 			const Vector3D Normal = HitObj->Normal(HitPoint);
 			// If we did end up hitting an object, change the result color from background
 			// This is where we do Phong-Blinn >:)
-			const Color AmbientLight = Color(51, 51, 51);
 			const Color DiffuseLight = Color(255, 255, 255);
 			const Color SpecularLight = Color(255, 255, 255);
 			const float Shininess = 10.f;
+			// We know there will be ambient color on this object at least
 			ResultColor = AmbientLight * HitObj->GetColor();
 			for (int LightIndex = 0; LightIndex < AllLights.Num(); ++LightIndex)
 			{
 				// For every single light
 				const Vector3D DirToLightFromHit = (AllLights.GetElement(LightIndex)->Position - HitPoint).Normalize();
-				// Add Diffuse
-				const float DiffuseDotProduct = Normal * DirToLightFromHit;
-				ResultColor += AllLights.GetElement(LightIndex)->LightColor * HitObj->GetColor() * (DiffuseDotProduct < 0.f ? 0.f : DiffuseDotProduct);
-				// Add Specular
-				// First must calculate halfway vector
-				const Vector3D HalfwayVector = (DirToLightFromHit - RayToTrace.Direction).Normalize();
-				const float SpecularDotProduct = Normal * HalfwayVector;
-				ResultColor += AllLights.GetElement(LightIndex)->LightColor * powf((SpecularDotProduct < 0.f ? 0.f : SpecularDotProduct), Shininess);
+				const float SqrDistToLight = (AllLights.GetElement(LightIndex)->Position - HitPoint).LengthSqr();
+				// First check if there is an object between hit point and this light, if so we are in shade (for this light)
+				const Ray ShadowRay = Ray(HitPoint + Normal * EPSILON, DirToLightFromHit);
+				bool InShadow = false;
+				for (int ObjIndex = 0; ObjIndex < AllObjs.Num(); ++ObjIndex)
+				{
+					TArray<float> ShadowRayHits = AllObjs.GetElement(ObjIndex)->Intersect(ShadowRay);
+					for (int ShadowIndex = 0; ShadowIndex < ShadowRayHits.Num(); ++ShadowIndex)
+					{
+						if (ShadowRayHits.GetElement(ShadowIndex) > EPSILON && powf(ShadowRayHits.GetElement(ShadowIndex), 2) < SqrDistToLight)
+						{
+							InShadow = true;
+							break;
+						}
+					}
+					// If the shadow ray did indeed intersect with an object, we are in shadow
+					if (InShadow) break;
+				}
+				if (!InShadow)
+				{
+					// If Hit point is not in shadow, do the rest of the lighting calculations
+					// Add Diffuse
+					const float DiffuseDotProduct = Normal * DirToLightFromHit;
+					ResultColor += AllLights.GetElement(LightIndex)->LightColor * HitObj->GetColor() * (DiffuseDotProduct < 0.f ? 0.f : DiffuseDotProduct);
+					// Add Specular
+					// First must calculate halfway vector
+					const Vector3D HalfwayVector = (DirToLightFromHit - RayToTrace.Direction).Normalize();
+					const float SpecularDotProduct = Normal * HalfwayVector;
+					ResultColor += AllLights.GetElement(LightIndex)->LightColor * powf((SpecularDotProduct < 0.f ? 0.f : SpecularDotProduct), Shininess);
+				}
 			}
 		}
 

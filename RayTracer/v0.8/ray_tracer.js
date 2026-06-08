@@ -308,7 +308,7 @@ function dbg(...args) {
   var h16 = new Int16Array(1);
   var h8 = new Int8Array(h16.buffer);
   h16[0] = 0x6373;
-  if (h8[0] !== 0x73 || h8[1] !== 0x63) throw 'Runtime error: expected the system to be little-endian! (Run with -sSUPPORT_BIG_ENDIAN to bypass)';
+  if (h8[0] !== 0x73 || h8[1] !== 0x63) abort('Runtime error: expected the system to be little-endian! (Run with -sSUPPORT_BIG_ENDIAN to bypass)');
 })();
 
 function consumedModuleProp(prop) {
@@ -546,6 +546,8 @@ function getBinarySync(file) {
   if (readBinary) {
     return readBinary(file);
   }
+  // Throwing a plain string here, even though it not normally adviables since
+  // this gets turning into an `abort` in instantiateArrayBuffer.
   throw 'both async and sync fetching of the wasm failed';
 }
 
@@ -574,8 +576,8 @@ async function instantiateArrayBuffer(binaryFile, imports) {
     err(`failed to asynchronously prepare wasm: ${reason}`);
 
     // Warn on some common problems.
-    if (isFileURI(wasmBinaryFile)) {
-      err(`warning: Loading from a file URI (${wasmBinaryFile}) is not supported in most browsers. See https://emscripten.org/docs/getting_started/FAQ.html#how-do-i-run-a-local-webserver-for-testing-why-does-my-program-stall-in-downloading-or-preparing`);
+    if (isFileURI(binaryFile)) {
+      err(`warning: Loading from a file URI (${binaryFile}) is not supported in most browsers. See https://emscripten.org/docs/getting_started/FAQ.html#how-do-i-run-a-local-webserver-for-testing-why-does-my-program-stall-in-downloading-or-preparing`);
     }
     abort(reason);
   }
@@ -1387,6 +1389,7 @@ var _SetPixelSize = Module['_SetPixelSize'] = makeInvalidEarlyAccess('_SetPixelS
 var _SetBackgroundColor = Module['_SetBackgroundColor'] = makeInvalidEarlyAccess('_SetBackgroundColor');
 var _SetCameraPos = Module['_SetCameraPos'] = makeInvalidEarlyAccess('_SetCameraPos');
 var _SetCameraDir = Module['_SetCameraDir'] = makeInvalidEarlyAccess('_SetCameraDir');
+var _SetAmbientLightColor = Module['_SetAmbientLightColor'] = makeInvalidEarlyAccess('_SetAmbientLightColor');
 var _SetUp = Module['_SetUp'] = makeInvalidEarlyAccess('_SetUp');
 var _AddSphere = Module['_AddSphere'] = makeInvalidEarlyAccess('_AddSphere');
 var _AddLight = Module['_AddLight'] = makeInvalidEarlyAccess('_AddLight');
@@ -1410,6 +1413,7 @@ function assignWasmExports(wasmExports) {
   Module['_SetBackgroundColor'] = _SetBackgroundColor = createExportWrapper('SetBackgroundColor', 3);
   Module['_SetCameraPos'] = _SetCameraPos = createExportWrapper('SetCameraPos', 3);
   Module['_SetCameraDir'] = _SetCameraDir = createExportWrapper('SetCameraDir', 3);
+  Module['_SetAmbientLightColor'] = _SetAmbientLightColor = createExportWrapper('SetAmbientLightColor', 3);
   Module['_SetUp'] = _SetUp = createExportWrapper('SetUp', 0);
   Module['_AddSphere'] = _AddSphere = createExportWrapper('AddSphere', 7);
   Module['_AddLight'] = _AddLight = createExportWrapper('AddLight', 6);
