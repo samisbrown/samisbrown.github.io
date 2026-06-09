@@ -18,10 +18,10 @@ class PseudoRandom
 
         this.#firstSeed =
             seed == null || seed === 0
-                ? BigInt(Math.floor(Math.random() * 2 ** 32))
-                : BigInt(seed);
+                ? Math.floor(Math.random() * 2 ** 32)
+                : seed;
 
-        this.#seed = this.firstSeed;
+        this.#seed = this.#firstSeed;
     }
 	
 	IsSeedFirst()
@@ -31,18 +31,23 @@ class PseudoRandom
 
     Next() 
 	{
-        this.#seed = (this.#a * this.#seed + this.#c) % this.#mod;
-        return this.#seed;
+		/*console.log(typeof(this.#a));
+		console.log(typeof(this.#seed));
+		console.log(typeof(this.#c));
+		console.log(typeof(this.#mod));
+		console.log(typeof(this.#firstSeed));*/
+        this.#seed = Number((this.#a * BigInt(this.#seed) + this.#c) % this.#mod);
+        return this.#seed / Number(this.#mod);
     }
 
     Prev() 
 	{
-		if (IsSeedFirst()) return this.#seed; // so you cant go to the seed before the first one
+		if (this.IsSeedFirst()) return this.#seed / Number(this.#mod); // so you cant go to the seed before the first one
 			
-        this.seed =
-            (this.#aInv * ((this.#seed - this.#c + this.#mod) % this.#mod))
-            % this.#mod;
-        return this.#seed;
+        this.#seed =
+            Number((this.#aInv * ((BigInt(this.#seed) - this.#c + this.#mod) % this.#mod))
+            % this.#mod);
+        return this.#seed / Number(this.#mod);
     }
 }
 /////////////////
@@ -84,7 +89,7 @@ function GetNextRandomCard()
 function GetPreviousRandomCard()
 {
 	let randIndex = Math.floor((cardDB.length-1)*MyRand.Prev());
-	if (MyRand.IsFirstSeed() && !previousBtn.hasAttribute("disabled")) 
+	if (MyRand.IsSeedFirst() && !previousBtn.hasAttribute("disabled")) 
 	{
 		//If we back to starting rng seed, disable previous button
 		previousBtn.toggleAttribute("disabled");
@@ -141,7 +146,7 @@ function main()
 	if (affirmation.toLowerCase() != "i love sam browning") 
 	{
 		alert("Wrong!");
-		window.close();
+		window.location.href = "https://google.com";
 	}
 	else
 	{
@@ -149,4 +154,4 @@ function main()
 	}
 }
 
-main();
+//main();
