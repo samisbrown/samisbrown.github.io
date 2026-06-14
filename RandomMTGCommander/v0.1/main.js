@@ -97,11 +97,40 @@ function GetPreviousRandomCard()
 	return cardDB[randIndex];
 }
 
-function IsCommander(card)
+function IsValidCommander(card)
 {
+	function _IsValidCardType(card)
+	{
+		if (IsDoubleSided(card))
+		{
+			return _IsValidCardType(card.card_faces[0]) || _IsValidCardType(card.card_faces[1]);
+		}
+		try {
+			return (card.type_line.includes("Legendary")
+				&& card.hasOwnProperty("power"))
+			|| (card.type_line.includes("Planeswalker") && card.oracle_text.includes("can be your commander"));
+		} catch {console.log("ASDIUHASFIUBSD", card);}
+	}
 	return !card.type_line.includes("Token") 
-		&& card.type_line.includes("Legendary Creature")
-		&& card.legalities.commander == "legal";
+		&& card.legalities.commander == "legal" 
+		&& _IsValidCardType(card)
+		&& card.layout != "meld"
+		&& (!IsDoubleSided(card) || _IsValidCardType(card.card_faces[0]));
+}
+
+function IsDoubleSided(card)
+{
+	return card.layout == "flip" || card.layout == "modal_dfc" || card.layout == "transform";
+}
+
+function GetCardImage(card)
+{
+	if (IsDoubleSided(card))
+	{
+		console.log("FISUDHBFIUYSBDF");
+		return card.card_faces[0].image_uris.png;
+	}
+	return card.image_uris.png;	
 }
 
 rerollBtn.addEventListener("click", () => {
@@ -122,22 +151,22 @@ rerollBtn.addEventListener("click", () => {
 	console.log(data);*/
 	
 	let card = GetNextRandomCard();
-	while (!IsCommander(card))
+	while (!IsValidCommander(card))
 	{
 		card = GetNextRandomCard();
 	}
 	console.log(card);
-	cardImg.src = card.image_uris.png;
+	cardImg.src = GetCardImage(card);
 });
 
 previousBtn.addEventListener("click", () => {	
 	let card = GetPreviousRandomCard();
-	while (!IsCommander(card))
+	while (!IsValidCommander(card))
 	{
 		card = GetPreviousRandomCard();
 	}
 	console.log(card);
-	cardImg.src = card.image_uris.png;
+	cardImg.src = GetCardImage(card);
 });
 
 function main()
