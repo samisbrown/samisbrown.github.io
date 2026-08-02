@@ -63,7 +63,7 @@ let cardDB;
 		"https://api.scryfall.com/bulk-data/oracle-cards"
 	)
 	response.json().then(async data => {
-		json_download = await fetch(data.download_uri);
+		json_download = await fetch(data.uri);
 		json_download.json().then(all_cards_data => {
 			cardDB = all_cards_data;
 			rerollBtn.innerHTML = "Reroll Commander";
