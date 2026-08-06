@@ -54,28 +54,34 @@ class PseudoRandom
 cardImg = document.getElementById("card_img");
 previousBtn = document.getElementById("previous");
 rerollBtn = document.getElementById("reroll");
+cardAmountInp = document.getElementById("card_amount");
 
 MyRand = new PseudoRandom(null);
 
-let cardDB;
+async function DecompressBlob(blob) {
+    const ds = new DecompressionStream("gzip");
+    const decompressedStream = blob.stream().pipeThrough(ds);
+    return new Response(decompressedStream);
+}
+
 (async () => {
-	response = await fetch(
-		"https://api.scryfall.com/bulk-data/oracle-cards"
-	)
-	response.json().then(async data => {
-		json_download = await fetch(data.uri);
-		json_download.json().then(all_cards_data => {
-			cardDB = all_cards_data;
-			rerollBtn.innerHTML = "Reroll Commander";
-			rerollBtn.removeAttribute("disabled");
-			previousBtn.innerHTML = "Previous Commander";
-		});
-	});
-	/*response.json().then(data => {
-		cardDB = data;
-		rerollBtn.innerHTML = "Reroll Commander";
-		rerollBtn.removeAttribute("disabled");
-	});*/
+    const response = await fetch(
+        "https://api.scryfall.com/bulk-data/oracle-cards"
+    );
+
+    const metadata = await response.json();
+
+    const compressedResponse = await fetch(metadata.jsonl_download_uri);
+
+    const decompressedResponse =
+        await DecompressBlob(await compressedResponse.blob());
+
+    text = await decompressedResponse.text()
+    cardDB = text.trim().split("\n").map(line => JSON.parse(line));
+
+    rerollBtn.innerHTML = "Reroll Commander";
+    rerollBtn.removeAttribute("disabled");
+    previousBtn.innerHTML = "Previous Commander";
 })();
 
 function GetNextRandomCard()

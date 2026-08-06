@@ -22,9 +22,12 @@
 </head>
 <body>
   <h1>Random MTG Commander</h1>
-  <img id="card_img" src=""></img>
+  <div id="cards_container">
+    <img id="card_img" src="" width="550"></img>
+  </div>
   <button id="previous" disabled>Loading...</button>
   <button id="reroll" disabled>Loading...</button>
+  <input type="number" id="card_amount" min="1" max="9" value="1"></input>
 
   <script src="./main.js"></script>
 </body>
