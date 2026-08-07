@@ -1,0 +1,7 @@
+img.card {
+	width: 200px;
+}
+img.card:hover {
+    width: 500px;
+    transition: width 0.3s ease-in-out;
+}
