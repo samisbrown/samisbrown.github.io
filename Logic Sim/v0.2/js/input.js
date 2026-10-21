@@ -2,7 +2,7 @@ import { c } from "./main.js";
 import { camera } from "./camera.js";
 import { render, grid } from "./canvas.js";
 import { ui, UITile } from "./ui.js";
-import { Tile, TILE_SIZE } from "./tiles.js";
+import { tiles, Tile, TILE_SIZE } from "./tiles.js";
 
 export const mouse = {x: 0, y: 0};
 
@@ -48,18 +48,35 @@ export function init_events() // so c is defined and we avoid circular dependenc
 					if (hovered_tile != null)
 					{
 						// If a specific tile has been clicked on
-						ui.holding = {
-							"ui": new UITile(hovered_tile, mouse.x - ui.button_size / 2, mouse.y - ui.button_size / 2),
-							"real": new Tile()
-						};
+						ui.holding.type = hovered_tile;
+						
+						ui.holding.ui_preview.type = hovered_tile;
+						ui.holding.ui_preview.x = mouse.x - ui.button_size / 2;
+						ui.holding.ui_preview.y = mouse.y - ui.button_size / 2;
+						
+						const world = camera.screen_to_world(mouse.x, mouse.y);
+						const tile = grid.world_to_tile(world.x, world.y);
+						ui.holding.tile_preview.tile_x = tile.x;
+						ui.holding.tile_preview.tile_y = tile.y;
+						
 						window.requestAnimationFrame(render);
 					}
 					else
 					{
 						// The UI in general has been clicked on
-						ui.holding = null;
+						ui.holding.type = null;
 						window.requestAnimationFrame(render);
 					}
+				}
+				else
+				{
+					// Else the ui is not hovered, are we holding a tile?
+					if (ui.holding.type == null) {break;}
+					// If so, place it
+					const world_pos = camera.screen_to_world(mouse.x, mouse.y);
+					const tile_pos = grid.world_to_tile(world_pos.x, world_pos.y);
+					tiles.push(new Tile(ui.holding.type, tile_pos.x, tile_pos.y));
+					window.requestAnimationFrame(render);
 				}
 				break;
 			case 1:
@@ -99,16 +116,17 @@ export function init_events() // so c is defined and we avoid circular dependenc
 			camera.y += event.movementY;
 			window.requestAnimationFrame(render);
 		}
-		if (ui.holding != null)
+		if (ui.holding.type != null)
 		{
 			// If the mouse is holding a tile, update its pos
-			ui.holding.ui.x = mouse.x - ui.button_size / 2;
-			ui.holding.ui.y = mouse.y - ui.button_size / 2;
-			ui.holding.real.tile_x = Math.floor((mouse.x - grid.LINE_WIDTH / 2) / TILE_SIZE);
-			ui.holding.real.tile_y = Math.floor((mouse.y - grid.LINE_WIDTH / 2) / TILE_SIZE);
-			//let world_x = this.tile_x * TILE_SIZE + grid.LINE_WIDTH / 2;
-			//let world_y = this.tile_y * TILE_SIZE + grid.LINE_WIDTH / 2;
-			console.log(ui.holding.real.x, ui.holding.real.y);
+			ui.holding.ui_preview.x = mouse.x - ui.button_size / 2;
+			ui.holding.ui_preview.y = mouse.y - ui.button_size / 2;
+						
+			const world = camera.screen_to_world(mouse.x, mouse.y);
+			const tile = grid.world_to_tile(world.x, world.y);
+			ui.holding.tile_preview.tile_x = tile.x;
+			ui.holding.tile_preview.tile_y = tile.y;
+			
 			window.requestAnimationFrame(render);
 		}
 	});

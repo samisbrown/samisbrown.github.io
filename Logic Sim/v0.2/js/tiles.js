@@ -18,9 +18,8 @@ export class Tile
 	render()
 	{
 		ctx.fillStyle = this.color;
-		let world_x = this.tile_x * TILE_SIZE + grid.LINE_WIDTH / 2;
-		let world_y = this.tile_y * TILE_SIZE + grid.LINE_WIDTH / 2;
-		ctx.fillRect(world_x, world_y, TILE_SIZE - grid.LINE_WIDTH, TILE_SIZE - grid.LINE_WIDTH);
+		const world_pos = grid.tile_to_world(this.tile_x, this.tile_y);
+		ctx.fillRect(world_pos.x, world_pos.y, TILE_SIZE - grid.LINE_WIDTH, TILE_SIZE - grid.LINE_WIDTH);
 	}
 }
 

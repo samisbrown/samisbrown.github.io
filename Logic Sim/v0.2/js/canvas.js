@@ -8,6 +8,26 @@ export const grid = {
 	LINE_WIDTH: 1,
 	LINE_COLOR: "#cccccc",
 	
+	world_to_tile: function(world_x, world_y)
+	{
+		return {
+			x: Math.floor(
+				(world_x - grid.LINE_WIDTH / 2) / TILE_SIZE
+			),
+			y: Math.floor(
+				(world_y - grid.LINE_WIDTH / 2) / TILE_SIZE
+			)
+		};
+	},
+	
+	tile_to_world: function(tile_x, tile_y)
+	{
+		return {
+			x: tile_x * TILE_SIZE + grid.LINE_WIDTH / 2,
+			y: tile_y * TILE_SIZE + grid.LINE_WIDTH / 2
+		};
+	},
+	
 	render: function()
 	{
 		// Visible area expressed in world coordinates.
@@ -61,21 +81,21 @@ export function render()
 	
 	ui.render();
 	
-	if (ui.holding != null) 
+	if (ui.holding.type != null) 
 	{
 		if (ui.is_hovered(mouse))
 		{
 			// mouse over ui, render holding ui
-			ui.holding.ui.render();
+			ui.holding.ui_preview.render();
 		}
 		else
 		{
 			// Mouse not over ui, render real tile
+			ctx.setTransform(1, 0, 0, 1, 0, 0);
 			ctx.save();
 			camera.apply();
 			
-			ui.holding.real.render();
-			console.log(ui.holding.real);
+			ui.holding.tile_preview.render();
 			
 			ctx.restore();
 		}

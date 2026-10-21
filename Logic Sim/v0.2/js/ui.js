@@ -1,5 +1,5 @@
 import { c, ctx } from "./main.js";
-import { tile_types } from "./tiles.js";
+import { tile_types, Tile } from "./tiles.js";
 
 export class UITile
 {
@@ -32,7 +32,11 @@ export class UITile
 }
 
 export const ui = {	
-	holding: null,
+	holding: {
+		type: null,
+		ui_preview: new UITile(),
+		tile_preview: new Tile()
+	},
 	
 	margin: 24,
 	get x() {return this.margin;},

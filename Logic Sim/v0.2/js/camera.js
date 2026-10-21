@@ -48,5 +48,21 @@ export const camera = {
 			0, this.zoom,
 			this.x, this.y
 		);
-	}
+	},
+	
+	screen_to_world: function(screen_x, screen_y)
+    {
+        return {
+            x: (screen_x - this.x) / this.zoom,
+            y: (screen_y - this.y) / this.zoom
+        };
+    },
+
+    world_to_screen: function(world_x, world_y)
+    {
+        return {
+            x: world_x * this.zoom + this.x,
+            y: world_y * this.zoom + this.y
+        };
+    }
 };
