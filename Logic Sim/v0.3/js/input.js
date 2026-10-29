@@ -31,9 +31,27 @@ export function init_events() // so c is defined and we avoid circular dependenc
 		}
 	}, { passive: false });
 	
-	c.addEventListener("contextmenu", (e) => {
+	c.tabIndex = 0;
+	c.focus();
+	c.addEventListener("keydown", (event) => {
+		// Delete key press and ui not hovered
+		if (event.key == "Delete" && !ui.is_hovered(mouse))
+		{
+			// Delete the tile at mouse pos
+			const world_pos = camera.screen_to_world(mouse.x, mouse.y);
+			const tile_pos = grid.world_to_tile(world_pos.x, world_pos.y);
+			
+			delete main_tile.tiles[`${tile_pos.x},${tile_pos.y}`];
+			
+			window.requestAnimationFrame(render);
+		}
+		// Debug
+		//console.log(event.key);
+	});
+	
+	c.addEventListener("contextmenu", (event) => {
 		// Remove default right click functionality
-		e.preventDefault();
+		event.preventDefault();
 	});
 
 	c.addEventListener("mousedown", (event) => {

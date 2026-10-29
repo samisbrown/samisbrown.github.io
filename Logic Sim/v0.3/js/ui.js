@@ -59,6 +59,9 @@ export const ui = {
 			let ui_tile_y = this.BUTTON_SPACING + Math.floor(i / this.BUTTONS_PER_ROW) * (this.BUTTON_SIZE + this.BUTTON_SPACING);
 			this.tiles.push(new UITile(Tile.TYPES[i], this.x + ui_tile_x, this.y + ui_tile_y));
 		}
+		
+		this.holding.tile_preview.color = "#ff000088";
+		
 		console.log(this.tiles);
 	},
 	
