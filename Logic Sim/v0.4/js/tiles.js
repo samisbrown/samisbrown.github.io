@@ -76,7 +76,9 @@ class TruthTable
 	
 	#set_bit(bit_index, value)
 	{
-		this.#truthtable_bytearray[bit_index / 8] |= value << bit_index % 8;
+		// THIS FUNCTION SETS TO 1 BUT NOT 0
+		this.#truthtable_bytearray[bit_index / 8n] |= value << parseInt(bit_index % 8n);
+		console.log(this.#truthtable_bytearray[bit_index / 8n]);
 	}
 	
 	#get_inputs_as_number(inputs)
@@ -85,7 +87,7 @@ class TruthTable
 		for (let i = this.#input_names.length - 1; i >= 0; i--)
 		{
 			inputs_as_number <<= 1n;
-			inputs_as_number |= inputs[this.#input_names[i]];			
+			inputs_as_number |= BigInt(inputs[this.#input_names[i]]);			
 		}
 		
 		return inputs_as_number;
@@ -93,38 +95,40 @@ class TruthTable
 	
 	set_input(inputs, outputs)
 	{
-		inputs_as_number = this.#get_inputs_as_number(inputs);
+		let inputs_as_number = this.#get_inputs_as_number(inputs);
 		
-		output_index = inputs_as_number * output_names.length;
+		let output_index = inputs_as_number * BigInt(this.#output_names.length);
 		
-		for (let i = 0; i < output_names.length; i++)
+		for (let i = 0; i < this.#output_names.length; i++)
 		{
-			this.#set_bit(output_index + i, this.#output_names[i]);
+			//console.log(`Setting bit ${output_index + BigInt(i)} to `)
+			this.#set_bit(output_index + BigInt(i), outputs[this.#output_names[i]]);
 		}
 	}
 	
 	get_outputs(inputs)
 	{
-		inputs_as_number = this.#get_inputs_as_number(inputs);
+		let inputs_as_number = this.#get_inputs_as_number(inputs);
 		
-		outputs_as_number = 0n;
-		const bit_index_start = inputs_as_number * output_names.length;
-		const bit_index_stop = inputs_as_number * output_names.length + output_names.length;
-		const byte_index_start = bit_index_start / 8;
-		const byte_index_stop = bit_index_stop / 8;
+		let outputs_as_number = 0n;
+		const bit_index_start = inputs_as_number * BigInt(this.#output_names.length);
+		const bit_index_stop = inputs_as_number * BigInt(this.#output_names.length) + BigInt(this.#output_names.length);
+		const byte_index_start = bit_index_start / 8n;
+		const byte_index_stop = bit_index_stop / 8n;
 		for (let byte_index = byte_index_start; byte_index < byte_index_stop; byte_index++)
 		{
-			outputs_as_number <<= 8;
-			outputs_as_number |= this.#truthtable_bytearray[byte_index];
+			outputs_as_number <<= 8n;
+			outputs_as_number |= BigInt(this.#truthtable_bytearray[byte_index]);
+			console.log(outputs_as_number);
 		}
 		
-		outputs = {};
-		for (let i = this.#output_names.length; i >= 0; i--)
+		let outputs = {};
+		for (let i = this.#output_names.length - 1; i >= 0; i--)
 		{
-			outputs[this.#output_names[i]] = outputs_as_number & 0x1;
-			outputs_as_number >>= 1;
+			outputs[this.#output_names[i]] = parseInt(outputs_as_number & 0x1n);
+			outputs_as_number >>= 1n;
 		}
-		return outputs.copy();
+		return JSON.parse(JSON.stringify(outputs));
 	}
 }
 
